@@ -6,6 +6,7 @@
 
 #define FILENAME "addresses.csv"
 #define PROGRAM_NOT_ENDED 1
+#define MAX_INPUT_LENGTH 200
 
 Node* load_init_data();
 char* strdup(const char* c);
@@ -19,20 +20,17 @@ int action_find(Node** addressBook);
 
 int main(void)
 {
-    printf("------ LOADING DATA FROM ADDRESSES.CSV ------\n");
-
     Node* addressBook = load_init_data();
     if (addressBook == NULL) {
         printf("COULDN'T LOAD DATA CORRECTLY. CAN CONTINUE WITHOUT IT.");
     }
 
-    printf("------ LOADING DATA FROM ADDRESSES.CSV ------\n");
-
     print_actions_table();
-    char input[200];
+
+    char input[MAX_INPUT_LENGTH];
 
     while(PROGRAM_NOT_ENDED){
-        printf("- ");
+        printf("~ ");
         fgets(input, sizeof(input), stdin);
 
         char* action = strtok(input, " ");
@@ -45,6 +43,8 @@ int main(void)
     return 0;
 }
 
+/*  Executes given address book action.
+    Returns 0 on success, -1 otherwise.  */
 int exec_action(const char* action, Node** addressBook)
 {
     if (strcmp(action, "display\n") == 0){
@@ -68,6 +68,8 @@ int exec_action(const char* action, Node** addressBook)
     return -1;
 }
 
+/*  Executes delete action.
+    Returns 0 on success, -1 otherwise.  */
 int action_delete(Node** addressBook)
 {
     char* param = strtok(NULL, " ");
@@ -86,20 +88,15 @@ int action_delete(Node** addressBook)
     return delete_by_index(atoi(param), addressBook);
 }
 
+/*  Executes find action.
+    Returns 0 on success (or if there were no matches), -1 otherwise.  */
 int action_find(Node** addressBook)
 {
     char* param = strtok(NULL, " ");
     param[strlen(param) - 1] = '\0';
 
     if (is_index(param) == -1){
-        Node* tmp = find_by_name(param, *addressBook);
-
-        if (tmp == NULL){
-            printf("No adress with name %s\n", param);
-            return 0;
-        }
-
-        print_node(tmp);
+        find_by_name(param, *addressBook);
         return 0;
     }
 
@@ -115,6 +112,8 @@ int action_find(Node** addressBook)
     return 0;
 }
 
+/*  Executes add action.
+    Returns 0 on success, -1 otherwise.  */
 int action_add(Node** addressBook)
 {
     char* name = strtok(NULL, " ");
@@ -151,13 +150,15 @@ void print_actions_table()
     printf("add [name] [surname] [email] [phoneNumber] [index: optional] - Adds new address\n");
     printf("delete [index] | delete all - Deleted address\n");
     printf("find [index] | find [name] - Finds address\n");
-    printf("exit - exits the program\n");
+    printf("exit - Exits the program\n");
     printf("------------------------------------  ACTIONS ------------------------------------\n");
 }
 
+/*  Builds a string of the path to the default addresses.csv location.
+    Returns a `char*` path on success, `NULL` otherwise.  */
 char* get_full_path(const char* homeDir)
 {
-    int fullLen = strlen(homeDir) + strlen(FILENAME) + 2;
+    int fullLen = strlen(homeDir) + strlen(FILENAME) + 2;   // +2 to account for '/' symbol and '\0'.
 
     char* fullPath = (char*)malloc(fullLen * sizeof(char));
 
@@ -168,6 +169,8 @@ char* get_full_path(const char* homeDir)
     return fullPath;
 }
 
+/*  Loads the initial data from addresses.csv.
+    Returns a new `Node*` address book on success, `NULL` if the path is incorrect or if the file couldn't be opened.  */
 Node* load_init_data()
 {
     char* homeDir = getenv("HOME");
@@ -179,22 +182,24 @@ Node* load_init_data()
 
     if ((fin = fopen(fullPath, "r")) == NULL){
         printf("%s was not found in %s. Continuing without it.\n", FILENAME, homeDir);
+        free(fullPath);
         return NULL;
     }
 
     Node* adrBook = NULL;
 
     parse_init_data(fin, &adrBook);
-
     free(fullPath);
     fclose(fin);
 
     return adrBook;
 }
 
+/*  Parses data from the .csv file.
+    On successful parse, appends the node to the address book.  */
 void parse_init_data(FILE* fin, Node** addressBook)
 {
-    char buffer[200];
+    char buffer[MAX_INPUT_LENGTH];
 
     while(fgets(buffer, sizeof(buffer), fin) != NULL){
         buffer[strlen(buffer) - 1] = '\0';  // Remove trailing \n
@@ -217,7 +222,8 @@ void parse_init_data(FILE* fin, Node** addressBook)
     }
 }
 
-// Duplicate the string
+/*  Duplicates the string.
+    Returns a new `char*` on success, `NULL` otherwise.  */
 char* strdup(const char *c)
 {
     int len = strlen(c) + 1;
@@ -230,6 +236,8 @@ char* strdup(const char *c)
     return dup;
 }
 
+/*  Checks if the given string is a valid index (integer).
+    Returns 0 if true, -1 if false.  */
 int is_index(const char* inp)
 {
     while(*inp != '\0'){
