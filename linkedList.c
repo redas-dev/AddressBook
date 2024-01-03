@@ -11,7 +11,6 @@ typedef struct Node{
     struct Node* next;
 } Node;
 
-Node* g_head = NULL;
 int g_length = 0;
 
 // Prints single node
@@ -21,14 +20,14 @@ extern void print_node(Node* node)
 }
 
 // Prints records from the linked list
-extern void print_records()
+extern void print_records(Node* head)
 {
-    if (g_head == NULL){
+    if (head == NULL){
         printf("No records in the address book found.\n");
         return;
     }
     
-    Node* curr = g_head;
+    Node* curr = head;
 
     while(curr != NULL){
         print_node(curr);
@@ -37,19 +36,19 @@ extern void print_records()
 }
 
 // Adds new node to the end of the linked list
-extern int add_new_to_end(Node* node)
+extern int add_new_to_end(Node* node, Node** head)
 {
     if (node == NULL) return -1;
 
-    if (g_head == NULL){
-        g_head = node;
+    if (*head == NULL){
+        *head = node;
 
         g_length++;
 
         return 0;
     }
 
-    Node* curr = g_head;
+    Node* curr = *head;
 
     while(curr->next != NULL){
         curr = curr->next;
@@ -62,79 +61,82 @@ extern int add_new_to_end(Node* node)
 }
 
 // Adds new Node to the specified index of the linked list
-extern int add_new_by_index(Node* node, int idx)
+extern int add_new_by_index(Node* node, int idx, Node** head)
 {
     if (node == NULL) return -1;
     if (idx < 0 || idx > g_length + 1) return -2;
 
     if (idx == 0){
-        node->next = g_head;
-        g_head = node;
+        node->next = *head;
+        *head = node;
         return 0;
     }
 
-    Node* curr = g_head;
+    Node* curr = *head;
     int currIdx = 0;
 
     while(currIdx < idx - 1)
     {
-        g_head = g_head->next;
+        curr = curr->next;
         currIdx++;
     }
 
-    node->next = g_head->next;
-    g_head->next = node;
+    node->next = curr->next;
+    curr->next = node;
 
-    g_head = curr;
     g_length++;
 
     return 0;
 }
 
 // Deletes node by the specified index
-extern int delete_by_index(int idx)
+extern int delete_by_index(int idx, Node** head)
 {
     if (idx < 0 || idx > g_length + 1) return -2;
 
     if (idx == 0){
-        Node* nextNodes = g_head->next;
-        free(g_head);
-        g_head = nextNodes;
+        Node* nextNodes = (*head)->next;
+        free(*head);
+        *head = nextNodes;
         return 0;
     }
 
     int currIdx = 0;
 
     while(currIdx < idx - 1){
-        g_head = g_head->next;
+        *head = (*head)->next;
         currIdx++;
     }
 
-    Node* nextNodes = g_head->next->next;
-    free(g_head->next);
-    g_head->next = nextNodes;
+    Node* nextNodes = (*head)->next->next;
+    free((*head)->next);
+    (*head)->next = nextNodes;
 
     return 0;
 }
 
 // Deletes all nodes from the linked list
-extern void delete_all()
+extern void delete_all(Node** head)
 {
-    while(g_head){
-        Node* temp = g_head;
-        g_head = g_head->next;
+    while(*head){
+        Node* temp = *head;
+        *head = (*head)->next;
+        free(temp->name);
+        free(temp->email);
+        free(temp->surname);
+        free(temp->phoneNumber);
         free(temp);
     }
 }
 
 // Finds node by index
-extern Node* find_by_pos(int idx)
+extern Node* find_by_pos(int idx, Node* head)
 {
     if (idx < 0 || idx > g_length + 1) return NULL;
 
     int currIdx = 0;
 
-    Node* curr = g_head;
+    Node* curr = head;
 
     while(currIdx < idx){
         curr = curr->next;
@@ -145,9 +147,9 @@ extern Node* find_by_pos(int idx)
 }
 
 // Finds node by name property
-extern Node* find_by_name(char* name)
+extern Node* find_by_name(char* name, Node* head)
 {
-    Node* curr = g_head;
+    Node* curr = head;
 
     while(curr != NULL){
         if (strcmp(name, curr->name) == 0){
