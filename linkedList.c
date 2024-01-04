@@ -1,20 +1,13 @@
+#define _DEFAULT_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-typedef struct Node{
-    char* name;
-    char* surname;
-    char* email;
-    char* phoneNumber;
-
-    struct Node* next;
-} Node;
+#include "linkedList.h"
 
 // Total length of the list
 int g_length = 0;
-
-static void free_node(Node** node);
 
 // Prints single Node
 extern void print_node(Node* node)
@@ -113,7 +106,7 @@ extern int delete_by_index(int idx, Node** head)
 
     if (idx == 0){
         *head = temp->next;
-        free_node(&temp);
+        free(temp);
 
         g_length--;
 
@@ -127,7 +120,7 @@ extern int delete_by_index(int idx, Node** head)
 
     Node* nextNodes = temp->next->next;
 
-    free_node(&(temp->next));
+    free(temp->next);
 
     temp->next = nextNodes;
 
@@ -142,7 +135,7 @@ extern void delete_all(Node** head)
     while(*head){
         Node* temp = *head;
         *head = (*head)->next;
-        free_node(&temp);
+        free(temp);
     }
     g_length = 0;
 }
@@ -182,26 +175,25 @@ extern void find_by_name(char* name, Node* head)
 
 /*  Creates a new `Node*` with the given params.
     Returns the `Node*` on success, `NULL` otherwise.  */
-extern Node* create_new_node(char* name, char* surname, char* email, char* phoneNumber)
+extern Node* create_new_node(char name[], char surname[], char email[], char phoneNumber[])
 {
     Node* newNode = (Node*)malloc(sizeof(Node));
 
     if (newNode == NULL) return NULL;
 
-    newNode->name = name;
-    newNode->surname = surname;
-    newNode->email = email;
-    newNode->phoneNumber = phoneNumber;
+    strncpy(newNode->name, name, sizeof(newNode->name));
+    newNode->name[sizeof(newNode->name) - 1] = '\0';
+
+    strncpy(newNode->surname, surname, sizeof(newNode->surname));
+    newNode->name[sizeof(newNode->surname) - 1] = '\0';
+
+    strncpy(newNode->email, email, sizeof(newNode->email));
+    newNode->name[sizeof(newNode->email) - 1] = '\0';
+
+    strncpy(newNode->phoneNumber, phoneNumber, sizeof(newNode->phoneNumber));
+    newNode->name[sizeof(newNode->phoneNumber) - 1] = '\0';
+
     newNode->next = NULL;
 
     return newNode;
-}
-
-static void free_node(Node** node)
-{
-    free((*node)->name);
-    free((*node)->surname);
-    free((*node)->email);
-    free((*node)->phoneNumber);
-    free((*node));
 }

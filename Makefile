@@ -1,13 +1,14 @@
 CFILES := $(wildcard *.c)     # All .c files
 OBJS := $(CFILES:.c=.o)       # Tranform the names from *.c -> *.o
+PROGRAM := addressBook
 
 .PHONY: all clean
 
-all: addressBook
+all: $(PROGRAM)
 
 # *.o ---> addressBook
-addressBook: $(OBJS)
-	@$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+$(PROGRAM): $(OBJS)
+	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
 # *.c ---> *.o
 %.o: %.c
@@ -15,4 +16,4 @@ addressBook: $(OBJS)
 
 # Removes all .o files
 clean:
-	rm -f $(OBJS)
+	rm -f $(OBJS)$(PROGRAM)
