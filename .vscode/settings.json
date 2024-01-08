@@ -7,6 +7,7 @@
         "stdlib.h": "c",
         "chrono": "c",
         "string.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "node.h": "c"
     }
 }

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <signal.h>
 
-#include "linkedList.h"
+#include "../lib/linkedList.h"
 #include "actions.h"
 #include "helpers.h"
 
