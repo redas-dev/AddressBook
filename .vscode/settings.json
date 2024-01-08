@@ -5,6 +5,8 @@
         "linkedlist.h": "c",
         "signal.h": "c",
         "stdlib.h": "c",
-        "chrono": "c"
+        "chrono": "c",
+        "string.h": "c",
+        "stdio.h": "c"
     }
 }

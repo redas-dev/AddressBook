@@ -1,5 +1,3 @@
-#define _DEFAULT_SOURCE
-
 #include "actions.h"
 #include "linkedList.h"
 #include "helpers.h"
