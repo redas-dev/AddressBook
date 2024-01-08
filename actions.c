@@ -95,10 +95,12 @@ int action_add(Node** addressBook)
 
     if (index != NULL){
         index[strlen(index) - 1] = '\0';
+
         strncpy(temp->phoneNumber, phoneNum, sizeof(temp->phoneNumber));
         temp->phoneNumber[sizeof(temp->phoneNumber) - 1] = '\0';
 
         if(is_index(index) == -1){
+            free(temp);
             printf("Incorrect index.\n");
             return -1;
         }
@@ -107,6 +109,7 @@ int action_add(Node** addressBook)
     }
 
     phoneNum[strlen(phoneNum) - 1] = '\0';
+
     strncpy(temp->phoneNumber, phoneNum, sizeof(temp->phoneNumber));
     temp->phoneNumber[sizeof(temp->phoneNumber) - 1] = '\0';
 

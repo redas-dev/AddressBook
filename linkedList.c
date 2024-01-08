@@ -46,6 +46,7 @@ extern void print_records(Node* head)
 extern int add_new_to_end(Node* node, Node** head)
 {
     if (node == NULL) return -1;
+
     if (*head == NULL){
         *head = node;
 
@@ -137,6 +138,7 @@ extern void delete_all(Node** head)
         *head = (*head)->next;
         free(temp);
     }
+
     g_length = 0;
 }
 
@@ -175,7 +177,7 @@ extern void find_by_name(char* name, Node* head)
 
 /*  Creates a new `Node*` with the given params.
     Returns the `Node*` on success, `NULL` otherwise.  */
-extern Node* create_new_node(char name[], char surname[], char email[], char phoneNumber[])
+extern Node* create_new_node(char* name, char* surname, char* email, char* phoneNumber)
 {
     Node* newNode = (Node*)malloc(sizeof(Node));
 
@@ -188,7 +190,7 @@ extern Node* create_new_node(char name[], char surname[], char email[], char pho
     newNode->name[sizeof(newNode->surname) - 1] = '\0';
 
     strncpy(newNode->email, email, sizeof(newNode->email));
-    newNode->name[sizeof(newNode->email) - 1] = '\0';
+    newNode->email[sizeof(newNode->email) - 1] = '\0';
 
     strncpy(newNode->phoneNumber, phoneNumber, sizeof(newNode->phoneNumber));
     newNode->name[sizeof(newNode->phoneNumber) - 1] = '\0';

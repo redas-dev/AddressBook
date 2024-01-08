@@ -10,37 +10,28 @@
 #include "helpers.h"
 
 #define FILENAME "addresses.csv"
-#define PROGRAM_NOT_ENDED 1
 #define MAX_INPUT_LENGTH MAX_SIZE * 6
 
 Node* load_init_data();
 void parse_init_data(FILE* fin, Node** adressBook);
 
-Node* addressBook = NULL;
+static volatile sig_atomic_t signal_sent = 0;
 
-void sig_handler(int signum)
+void sig_handler(int signal)
 {
-    delete_all(&addressBook);
-
-    switch (signum)
-    {
-        case 2:
-            signal(SIGINT, SIG_DFL);
-            raise(signum);
-            break;
-        case 3:
-            signal(SIGQUIT, SIG_DFL);
-            raise(signum);
-            break;
-    }
+    signal_sent = 1;
 }
 
 int main(void)
 {
-    signal(SIGINT, sig_handler);
-    signal(SIGQUIT, sig_handler);
+    struct sigaction sa = { .sa_handler = sig_handler };
+
+    sigaction(SIGINT, &sa, 0);
+    sigaction(SIGQUIT, &sa, 0);
+
+    char input[MAX_INPUT_LENGTH];
     
-    addressBook = load_init_data();
+    Node* addressBook = load_init_data();
 
     if (addressBook == NULL) {
         printf("COULDN'T LOAD DATA CORRECTLY. CAN CONTINUE WITHOUT IT.");
@@ -48,18 +39,18 @@ int main(void)
 
     print_actions_table();
 
-    char input[MAX_INPUT_LENGTH];
-
-    while(PROGRAM_NOT_ENDED){
+    while (!signal_sent){
         printf("~ ");
-        fgets(input, sizeof(input), stdin);
+        if(fgets(input, sizeof(input), stdin)){
+            char* action = strtok(input, " ");
 
-        char* action = strtok(input, " ");
+            int code = exec_action(action, &addressBook);
 
-        int code = exec_action(action, &addressBook);
+            if (code != 0) printf("Action failed, try again.\n");
+        }
+    } 
 
-        if (code != 0) printf("Action failed, try again.\n");
-    }
+    delete_all(&addressBook);
 
     return 0;
 }
