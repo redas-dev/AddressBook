@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "linkedList.h"
+#include "linkedlist.h"
 
 // Total length of the list
 int g_length = 0;

@@ -1,22 +1,23 @@
 SRC_DIR := src
 LIB_DIR := lib
+BIN_DIR := bin
+
 TARGET := addressBook
 
 .PHONY: all clean
 
-all: compile_src install_lib $(TARGET)
+all: compile_lib compile_src
 
-compile_src:
-	make -C $(SRC_DIR)
+compile_lib:
+	@make -C $(LIB_DIR)/linkedlist
 
-install_lib:
-	make -C $(LIB_DIR)
+compile_src: $(BIN)
+	@make -C $(SRC_DIR)
 
-$(TARGET): $(wildcard $(SRC_DIR)/*.o)
-	@echo $<
-	@echo $@
+$(BIN):
+	@mkdir $(BIN)
 
 clean:
-	rm -f $(PROGRAM)
-	make clean -C $(SRC_DIR)
-	make clean -C $(LIB_DIR)
+	@rm -f bin/$(TARGET)
+	@make clean -C $(SRC_DIR)
+	@make clean -C $(LIB_DIR)/linkedlist

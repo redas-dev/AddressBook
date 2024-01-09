@@ -1,4 +1,4 @@
-#include "../lib/linkedList.h"
+#include "linkedlist.h"
 
 #ifndef ACTIONS_H
 #define ACTIONS_H

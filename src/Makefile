@@ -1,13 +1,19 @@
-CFILES := $(wildcard *.c)     # All .c files
-OBJS := $(CFILES:.c=.o)       # Tranform the names from *.c -> *.o
+CFILES := $(wildcard *.c)
+OBJS := $(CFILES:.c=.o)
+
+BIN := ../bin
+
+TARGET := addressBook
+LIBS := linkedlist
+
+CFLAGS := -I$(HOME)/AddressBookTask/lib/linkedlist -L$(HOME)/AddressBookTask/lib/linkedlist -Wl,-rpath=$(HOME)/AddressBookTask/lib/linkedlist -Wall -Werror
 
 .PHONY: all clean
 
-all: $(OBJS)
+all: $(TARGET)
 
-# *.c ---> *.o
-%.o: %.c $(CFILES)
-	@$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+$(TARGET): $(OBJS)
+	@$(CC) $(CFLAGS) $(CPPFLAGS) -o $(BIN)/$(TARGET) $(OBJS) $(LIBS:%=-l%)
 
 clean:
-	rm -f $(OBJS)
+	@rm -f $(OBJS)

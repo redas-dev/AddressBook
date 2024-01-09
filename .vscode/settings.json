@@ -8,6 +8,8 @@
         "chrono": "c",
         "string.h": "c",
         "stdio.h": "c",
-        "node.h": "c"
+        "node.h": "c",
+        "helpers.h": "c",
+        "actions.h": "c"
     }
 }
